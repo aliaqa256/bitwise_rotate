@@ -1,43 +1,100 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"strconv"
 )
 
 func main() {
-	// get the number and convert it to binary
-	var number int64
-	
-	fmt.Printf("Enter a number: ")
-	fmt.Scan(&number)
-	if number < 0 {
-		number = 0
-	}
+	number := gettingInput()
 
 	init := strconv.FormatInt(number, 2)
 	fmt.Printf("The binary number is: [%s]\n", init)
 	L := len(init)
 	fmt.Printf("The number of bits is: [%d]\n", L)
-
-	var numberOfRotations int
-	fmt.Printf("Enter the number of rotations: ")
-	fmt.Scan(&numberOfRotations)
+	fmt.Print("for how many times you want to rotate ")
+	numberOfRotations := int64(gettingInput())
 	// if the number is negative, convert it to positive
-		if numberOfRotations < 0 {
-		numberOfRotations = 0
+	numberOfRotations = if_negative(numberOfRotations)
+
+	var R int = BakhshPazir(int(numberOfRotations), L)
+
+	dirction, err := getRightOrLeftInput()
+	if err != nil {
+		fmt.Println(err)
 	}
 
+	// b := number >> R
+	// c := number << (L - R)
+	// res := b | c
+	res := Rotate(dirction, number, L, R)
+	f := fmt.Sprintf("The result is: [%s]\n", strconv.FormatInt(res, 2)[len(strconv.FormatInt(res, 2))-L:])
+	fmt.Println(f)
+	fmt.Printf("%b	", res)
+}
 
-	var R int
-	if numberOfRotations > L {
-		R = int(numberOfRotations) % int(L)
+func gettingInput() (number int64) {
+	fmt.Printf("Enter a number: ")
+	fmt.Scan(&number)
+	number = if_negative(number)
+	return
+}
+
+func if_negative(num int64) int64 {
+	if num < 0 {
+		num = 0
+	}
+	return num
+}
+
+// NOTE: this funtion returns rune
+func getRightOrLeftInput() (rune, error) {
+	var direct string
+	fmt.Println("select the direction that you want to rotate ?(right ro left/ << or >> )")
+	fmt.Scan(&direct)
+	switch direct {
+	case "right":
+		return 'r', nil
+	case "left":
+		return 'l', nil
+	case "<<":
+		return 'l', nil
+	case "l":
+		return 'l', nil
+	case ">>":
+		return 'r', nil
+	case "r":
+		return 'r', nil
+	default:
+		return 'e', errors.New("wrong input")
+	}
+}
+
+func BakhshPazir(Num int, len int) int {
+	if Num > len {
+		return Num % len
 	} else {
-		R = numberOfRotations
+		return Num
 	}
-	b := number >> R
-	c := number << (L - R)
-	res := b | c
-	fmt.Printf("The result is: [%s]\n", strconv.FormatInt(res, 2)[len(strconv.FormatInt(res, 2))-L:])
+}
 
+// getRightOrLeftInput is function that gets inputs from user and decides
+
+func Rotate(direction rune, number int64, len, r int) int64 {
+	switch direction {
+	case 'r':
+		b := number >> r
+		c := number << (len - r)
+		res := b | c
+		return res
+	case 'l':
+		b := number << r
+		c := number >> (len - r)
+		res := b | c
+		return res
+
+	default:
+		return 0
+	}
 }
