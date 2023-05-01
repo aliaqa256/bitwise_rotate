@@ -25,13 +25,10 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// b := number >> R
-	// c := number << (L - R)
-	// res := b | c
 	res := Rotate(dirction, number, L, R)
-	f := fmt.Sprintf("The result is: [%s]\n", strconv.FormatInt(res, 2)[len(strconv.FormatInt(res, 2))-L:])
-	fmt.Println(f)
-	fmt.Printf("%b	", res)
+
+	fmt.Println(res)
+	fmt.Printf("%b", res)
 }
 
 func gettingInput() (number int64) {
@@ -85,13 +82,17 @@ func Rotate(direction rune, number int64, len, r int) int64 {
 	switch direction {
 	case 'r':
 		b := number >> r
+		b_masked := b & ((1 << len) - 1)
 		c := number << (len - r)
-		res := b | c
+		c_masked := c & ((1 << len) - 1)
+		res := b_masked | c_masked
 		return res
 	case 'l':
 		b := number << r
+		b_masked := b & ((1 << len) - 1)
 		c := number >> (len - r)
-		res := b | c
+		c_masked := c & ((1 << len) - 1)
+		res := b_masked | c_masked
 		return res
 
 	default:
