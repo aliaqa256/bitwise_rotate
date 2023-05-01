@@ -3,22 +3,19 @@ package main
 import (
 	"errors"
 	"fmt"
-	"strconv"
 )
 
 func main() {
 	number := gettingInput()
+	L := GetlenBinary(number)
+	ShowDetail(number, L)
 
-	init := strconv.FormatInt(number, 2)
-	fmt.Printf("The binary number is: [%s]\n", init)
-	L := len(init)
-	fmt.Printf("The number of bits is: [%d]\n", L)
 	fmt.Print("for how many times you want to rotate ")
 	numberOfRotations := int64(gettingInput())
 	// if the number is negative, convert it to positive
 	numberOfRotations = if_negative(numberOfRotations)
 
-	var R int = BakhshPazir(int(numberOfRotations), L)
+	var R int64 = Devideable(numberOfRotations, L)
 
 	dirction, err := getRightOrLeftInput()
 	if err != nil {
@@ -28,7 +25,7 @@ func main() {
 	res := Rotate(dirction, number, L, R)
 
 	fmt.Println(res)
-	fmt.Printf("%b", res)
+	fmt.Printf("%b \n", res)
 }
 
 func gettingInput() (number int64) {
@@ -68,7 +65,7 @@ func getRightOrLeftInput() (rune, error) {
 	}
 }
 
-func BakhshPazir(Num int, len int) int {
+func Devideable(Num, len int64) int64 {
 	if Num > len {
 		return Num % len
 	} else {
@@ -77,8 +74,7 @@ func BakhshPazir(Num int, len int) int {
 }
 
 // getRightOrLeftInput is function that gets inputs from user and decides
-
-func Rotate(direction rune, number int64, len, r int) int64 {
+func Rotate(direction rune, number, len, r int64) int64 {
 	switch direction {
 	case 'r':
 		b := number >> r
@@ -98,4 +94,22 @@ func Rotate(direction rune, number int64, len, r int) int64 {
 	default:
 		return 0
 	}
+}
+
+func GetlenBinary(num int64) int64 {
+	var inlen int64
+
+	for {
+		num = num / 2
+		inlen++
+		if num < 1 {
+			break
+		}
+	}
+	return inlen
+}
+
+func ShowDetail(number, L int64) {
+	fmt.Printf("The number of bits is: [%d]\n", L)
+	fmt.Printf("The binary number is: [%b] \n", number)
 }
